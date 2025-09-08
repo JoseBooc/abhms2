@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application</title>
+    <link rel="stylesheet" href="/resources/css/app.css" />
+  </head>
+  <body class="min-h-screen bg-gray-50">
+    <main class="mx-auto max-w-3xl p-6">
+      <h1 class="text-2xl font-semibold text-gray-900">Application is running</h1>
+      <p class="mt-2 text-gray-600">Vite dev server with Tailwind CSS and Alpine.js.</p>
+      <div x-data="{ count: 0 }" class="mt-6">
+        <button class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" @click="count++">Increment</button>
+        <span class="ml-3 font-medium" x-text="count"></span>
+      </div>
+    </main>
+    <script type="module" src="/resources/js/app.js"></script>
+  </body>
+</html>
