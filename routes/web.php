@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/admin', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+    Route::resource('/admin/rooms', \App\Http\Controllers\Admin\RoomController::class)->names('admin.rooms');
 });
 
 Route::middleware(['auth', 'verified', 'role:tenant'])->group(function () {
