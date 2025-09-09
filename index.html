@@ -22,6 +22,7 @@
           <a href="#features" class="text-gray-600 hover:text-gray-900">Features</a>
           <a href="#reserve" class="text-gray-600 hover:text-gray-900">Reserve</a>
           <a href="/login" class="rounded-md border border-gray-300 px-3 py-1.5 text-gray-700 hover:bg-gray-100">Admin Login</a>
+          <button type="button" id="logoutButton" class="rounded-md border border-gray-300 px-3 py-1.5 text-gray-700 hover:bg-gray-100">Logout</button>
         </nav>
       </div>
     </header>
@@ -215,11 +216,38 @@
             message: ''
           },
           submit() {
-            // Placeholder: here you would POST to backend
             this.submitted = true;
           }
         };
       }
+
+      async function getCsrfTokenFromMeta() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.getAttribute('content') : null;
+      }
+      function getCookie(name){
+        const m = document.cookie.match('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/\+^])/g,'\\$1') + '=([^;]*)');
+        return m ? decodeURIComponent(m[1]) : null;
+      }
+      async function ensureXsrfCookie() {
+        try { await fetch('/sanctum/csrf-cookie', { credentials: 'include' }); } catch {}
+      }
+      async function logoutViaPost() {
+        let headers = { 'Content-Type': 'application/json' };
+        const metaToken = await getCsrfTokenFromMeta();
+        if (metaToken) headers['X-CSRF-TOKEN'] = metaToken;
+        else {
+          await ensureXsrfCookie();
+          const xsrf = getCookie('XSRF-TOKEN');
+          if (xsrf) headers['X-XSRF-TOKEN'] = xsrf;
+        }
+        try {
+          await fetch('/logout', { method: 'POST', headers, credentials: 'include' });
+        } finally {
+          window.location.href = '/';
+        }
+      }
+      document.getElementById('logoutButton')?.addEventListener('click', logoutViaPost);
     </script>
   </body>
 </html>
