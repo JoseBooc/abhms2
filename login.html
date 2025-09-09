@@ -28,7 +28,7 @@
         <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <h1 class="text-center text-2xl font-semibold">Sign in</h1>
           <p class="mt-1 text-center text-sm text-gray-600">Use your admin, staff, or tenant account</p>
-          <form method="POST" action="/login" class="mt-6 space-y-4">
+          <form id="loginForm" method="POST" action="/login" class="mt-6 space-y-4">
             <div>
               <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
               <input id="email" name="email" type="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
@@ -42,7 +42,7 @@
             </div>
             <div class="flex items-center justify-between">
               <label class="flex items-center gap-2 text-sm text-gray-700">
-                <input type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                <input id="remember" type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
                 Remember me
               </label>
               <a href="/register" class="text-sm text-gray-600 hover:text-gray-900">Create account</a>
@@ -55,5 +55,36 @@
     </main>
 
     <script type="module" src="/resources/js/app.js"></script>
+    <script>
+      async function getCookie(name){
+        const m = document.cookie.match('(?:^|; )' + name.replace(/([.$?*|{}()\\[\\]\\\\\/+^])/g,'\\$1') + '=([^;]*)');
+        return m ? decodeURIComponent(m[1]) : null;
+      }
+      async function ensureXsrfCookie() {
+        try { await fetch('/sanctum/csrf-cookie', { credentials: 'include' }); } catch {}
+      }
+      async function login(e){
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const remember = document.getElementById('remember').checked;
+        await ensureXsrfCookie();
+        const xsrf = await getCookie('XSRF-TOKEN');
+        const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
+        if (xsrf) headers['X-XSRF-TOKEN'] = xsrf;
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers,
+          credentials: 'include',
+          body: JSON.stringify({ email, password, remember })
+        });
+        if (res.ok) {
+          window.location.href = '/dashboard';
+        } else {
+          alert('Login failed.');
+        }
+      }
+      document.getElementById('loginForm')?.addEventListener('submit', login);
+    </script>
   </body>
 </html>
