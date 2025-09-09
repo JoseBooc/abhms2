@@ -28,4 +28,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::get('/admin', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'verified', 'role:tenant'])->group(function () {
+    Route::get('/tenant', function () { return view('tenant.dashboard'); })->name('tenant.dashboard');
+});
+
+Route::middleware(['auth', 'verified', 'role:staff'])->group(function () {
+    Route::get('/staff', function () { return view('staff.dashboard'); })->name('staff.dashboard');
+});
+
+Route::get('/reservations', function () { return view('reservations.index'); })->name('reservations.index');
+
 require __DIR__.'/auth.php';
