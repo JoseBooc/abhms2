@@ -61,4 +61,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function tenantProfile()
+    {
+        return $this->hasOne(\App\Models\TenantProfile::class);
+    }
+
+    public function appliances()
+    {
+        return $this->hasMany(\App\Models\ApplianceDeclaration::class);
+    }
 }
